@@ -1,7 +1,7 @@
-Server Manager
+System Administration Secure Electronic Ledger -- SASEL
 ================================================================================
 
-Server Manager is an implementation of a server administrator's book.
+SASEL is an implementation of a server administrator's book.
 ie it supports documentation of information of various servers.
 Each server supports multiple applications, and even 
 multiple users. Each user(login account) on a server
@@ -30,12 +30,14 @@ You'll need to create your project-configuration on
 
 Once given access to the API console:
 +Visit the Google APIS console:
-  ++Create a project eg testAPP. 
-  ++Enable the Drive SDK and Drive API for use with your newly created project. 
-    To set up your android project for authorization with the above APIs, 
-    you will need to provide info from your keytool signing certificate. 
-    Follow the startup demo and instructions at:
-     https://developers.google.com/drive/quickstart-android
+
+  	+Create a project eg testAPP. 
+  
+  	+Enable the Drive SDK and Drive API for use with your newly created project. 
+    	To set up your android project for authorization with the above APIs, 
+    	you will need to provide info from your keytool signing certificate. 
+    	Follow the startup demo and instructions at:
+     	  https://developers.google.com/drive/quickstart-android
 
 +Make sure that you have downloaded the jar file json-simple-\*.jar. 
  Get the latest version at:
