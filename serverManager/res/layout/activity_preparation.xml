@@ -1,0 +1,95 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#F4F3F0" >
+
+    <LinearLayout
+        android:id="@+id/preparationLinearLayout"
+        style="@style/LoginFormContainer"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="100dp"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/googleAccountButton"
+            style="@style/AppBaseTheme"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/google_account"
+            android:onClick="selectNewAccount" />
+
+		       <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.2dp"
+                android:id="@+id/separator"
+                android:visibility="visible"
+                android:background="@android:color/darker_gray"/>
+        
+        <EditText
+            android:id="@+id/ivKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/iv_key"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:gravity="top"  >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/encryptionKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/encryption_key"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true" 
+            android:gravity="top" />
+
+        <ProgressBar
+            android:id="@+id/preparationProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="145dp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/sign_in_button"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:onClick="openSecreteBook"
+            android:text="@string/open_secrete_book"
+            android:background="#498af3"
+            android:textColor="#fff"  />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/welcome_banner_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/welcome_page_hints"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="21dp"
+        android:text="@string/app_welcome"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#498af3"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/welcome_page_hints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/preparationLinearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="101dp"
+        android:text="@string/preparation_welcome"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#555"
+        android:textSize="16sp" />
+
+</RelativeLayout>

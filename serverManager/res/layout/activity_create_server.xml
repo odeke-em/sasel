@@ -1,0 +1,130 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_centerInParent="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+	android:background="@drawable/grn_32_80"
+    tools:context=".CreateServerActivity" >
+
+	<RelativeLayout
+	    android:id="@+id/create_server_relative_layout"
+	    android:layout_width="wrap_content"
+	    android:layout_height="412dp"
+	    android:layout_gravity="center_vertical|center_horizontal"
+	     >
+
+	    <EditText
+	        android:id="@+id/location_et" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignLeft="@+id/hostname_et"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/hostname_et"
+	        android:ems="10"
+	        android:hint="@string/location_here"
+	        android:textColor="#000000" />
+
+	    <TextView
+	        android:id="@+id/location_tv" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/location_et"
+	        android:layout_alignBottom="@+id/location_et"
+	        android:layout_alignLeft="@+id/hostname_tv"
+	        android:hint="@string/location"
+	        android:textStyle="bold|italic" />
+
+	    <TextView
+	        android:id="@+id/hostname_tv" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/hostname_et"
+	        android:layout_alignBottom="@+id/hostname_et"
+	        android:layout_alignParentLeft="true"
+	        android:hint="@string/hostname"
+	        android:textStyle="bold|italic" />
+
+	    <EditText
+	        android:id="@+id/hostname_et" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/save_server_button"
+	        android:layout_marginTop="20dp"
+	        android:layout_toRightOf="@+id/hostname_tv"
+	        android:ems="10"
+	        android:textColor="#000000"
+	        android:hint="@string/hostname_here" />
+
+	    <TableLayout
+	        android:id="@+id/created_users_table"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" />
+
+	    <Button
+	        android:id="@+id/add_ipList_button" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/location_et"
+	        android:text="@string/add_ips" />
+
+	    <Button
+	        android:id="@+id/add_osList_button" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/add_ipList_button"
+	        android:layout_toRightOf="@+id/created_users_table"
+	        android:text="@string/add_oses" />
+
+	    <Button 
+	        android:id="@+id/add_aliasList_button" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/add_osList_button"
+	        android:text="@string/add_aliases" />
+
+	    <Button
+	        android:id="@+id/new_user_button" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/add_aliasList_button"
+	        android:text="@string/newUser" />
+
+	    <Button
+	        android:id="@+id/save_server_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignParentTop="true"
+	        android:text="@string/save" />
+
+	    <Button
+	        
+	        android:id="@+id/add_roleList_button" style="@style/itemText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/new_user_button"
+	        android:text="@string/add_roles" />
+
+	    <TableLayout
+	        android:id="@+id/added_server_entries"
+	        android:layout_gravity="center"
+	        android:layout_width="fill_parent"
+	        android:layout_below="@+id/add_roleList_button"
+	        android:layout_height="fill_parent" />
+	</RelativeLayout>
+
+</ScrollView>

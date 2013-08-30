@@ -1,0 +1,125 @@
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/grn_32_80"
+    tools:context=".CreateUserActivity" >
+
+	<ScrollView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" >
+
+		<TableLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content" >
+	
+			<TableRow>
+			    <TextView
+			        android:id="@+id/user_name"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textStyle="bold|italic"
+			        android:hint="@string/user_name" />
+				
+			    <EditText
+			        android:id="@+id/user_name_entry"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:ems="10"
+					android:layout_weight="0.6"
+			        android:hint="@string/user_name_here" >
+			    </EditText>
+			    
+			</TableRow>
+	    
+		   	<TableRow>
+
+		   		<TextView
+		   		    android:id="@+id/password"
+		   		    android:layout_width="wrap_content"
+		   		    android:layout_height="wrap_content"
+		   		    android:hint="@string/password"
+		   		    android:textStyle="bold|italic" />
+
+			    <EditText
+			        android:id="@+id/password_entry"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="0.6"
+			        android:ems="10"
+			        android:hint="@string/password_here"
+			        android:inputType="textPassword" >
+
+			        <requestFocus />
+			    </EditText>
+		    </TableRow>
+	    
+	    	<TableRow>
+
+	    		<TextView
+	    		    android:id="@+id/change_maker_name"
+	    		    android:layout_width="wrap_content"
+	    		    android:layout_height="wrap_content"
+	    		    android:hint="@string/change_maker_name"
+	    		    android:textStyle="bold|italic" />
+
+		        <EditText
+		            android:id="@+id/change_maker_name_entry"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="0.6"
+		            android:ems="10"
+		            android:hint="@string/change_maker_name_here" />
+			</TableRow>
+		
+			<TableRow >
+		
+				<TextView
+				    android:id="@+id/role"
+				    android:layout_width="wrap_content"
+				    android:hint="@string/role"
+				    android:textStyle="bold|italic" />
+		
+			    <EditText
+			        android:id="@+id/role_entry"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:ems="10"
+			        android:layout_weight="0.6"
+			        android:hint="@string/user_role_here" >
+			    </EditText>
+			    
+			</TableRow>
+
+			<TableRow>
+
+			<TextView
+			    android:id="@+id/change_date"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_marginBottom="40dp"
+			    android:hint="@string/change_date"
+			    android:textStyle="bold|italic" />
+
+			<EditText
+			    android:id="@+id/change_date_entry"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="0.6"
+			    android:ems="10"
+			    android:hint="@string/change_date_here"
+			    android:inputType="date" />
+
+			</TableRow>
+			
+			<Button
+			    android:id="@+id/save_button"
+			    style="@style/AppTheme"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginBottom="16dp"
+			    android:text="@string/save" />
+
+		</TableLayout>
+	</ScrollView>
+</HorizontalScrollView>

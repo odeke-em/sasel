@@ -1,0 +1,19 @@
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gld_32_80" >
+	
+    <ScrollView
+    	android:id="@+id/user_scroll_view"
+    	android:layout_width="wrap_content"
+    	android:layout_height="fill_parent"
+    	android:scrollbars="vertical|horizontal" >
+    	
+    	<TableLayout 
+    		android:id="@+id/user_table"
+    		android:layout_height="wrap_content"
+    		android:layout_width="match_parent" >
+    	
+		</TableLayout>
+	</ScrollView>
+</HorizontalScrollView>
