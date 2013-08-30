@@ -14,12 +14,13 @@ is downloaded and decrypted with your keys.
 
 For encryption you'll need an encryption key and an initialization vector. 
 
-This inception of this project was the necessity to
-manage an overwhelming amount of servers by Francois Brochu who
-felt that there are possibly other server administrators that would
-appreciate a tool to aid their work, from the comfort of any place with
-an internet connection, but still maintaining a sense of security. Using a 
-mobile device
+The inception of this project was the necessity to
+manage an overwhelming amount of servers by the system administrator
+at the Department of Electrical and Computer Engineering at the University of Alberta.
+The sys-admin felt that it would be valuable to other system administrators.
+He felt that this tool would permit sys-admins to access their server books
+from the comfort of any place with an internet connection, but still 
+maintaining a great sense of security, using a mobile device.
 
 
 SetUp
