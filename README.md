@@ -1,4 +1,4 @@
-System Administration Secure Electronic Ledger -- SASEL
+Sys Admin Secured Encrypted Ledger -- SASEL
 ================================================================================
 
 SASEL is an implementation of a server administrator's book.
