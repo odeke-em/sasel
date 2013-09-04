@@ -1,0 +1,42 @@
+# view AndroidManifest.xml #generated:32
+-keep class com.eceapp.sasel.IvSetEncryptionKeyActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:38
+-keep class com.eceapp.sasel.MainMenu { <init>(...); }
+
+# view AndroidManifest.xml #generated:21
+-keep class com.eceapp.sasel.Preparation { <init>(...); }
+
+# view AndroidManifest.xml #generated:44
+-keep class com.eceapp.sasel.SingleServerPage { <init>(...); }
+
+# onClick res/layout/activity_single_server_page.xml #generated:213
+-keepclassmembers class * { *** addAliasHandler(...); }
+
+# onClick res/layout/activity_single_server_page.xml #generated:163
+-keepclassmembers class * { *** addIpHandler(...); }
+
+# onClick res/layout/activity_single_server_page.xml #generated:119
+-keepclassmembers class * { *** addOsHandler(...); }
+
+# onClick res/layout/activity_single_server_page.xml #generated:256
+-keepclassmembers class * { *** addServerRoleHandler(...); }
+
+# onClick res/layout/activity_single_server_page.xml #generated:71
+-keepclassmembers class * { *** addUserHandler(...); }
+
+# onClick res/layout/activity_main_menu.xml #generated:10
+-keepclassmembers class * { *** createNewServer(...); }
+
+# onClick res/layout/activity_main_menu.xml #generated:18
+-keepclassmembers class * { *** exitServer(...); }
+
+# onClick res/layout/activity_preparation.xml #generated:29
+-keepclassmembers class * { *** openSASELBook(...); }
+
+# onClick res/layout/activity_single_server_page.xml #generated:277
+-keepclassmembers class * { *** saveSingleServer(...); }
+
+# onClick res/layout/activity_preparation.xml #generated:84
+-keepclassmembers class * { *** selectNewAccount(...); }
+
