@@ -3,7 +3,7 @@
     <string name="server_roles">Server Roles</string>
     <string name="add">add</string>
     <string name="open_sasel_book">Open Sasel Book</string>
-    <string name="app_name">Server Manager</string>
+    <string name="app_name">Sys Admin Secured Encrypted Ledger</string>
     <string name="action_settings">Settings</string>
     <string name="encryption_key">Encryption Key</string>
     <string name="iv_key">IV Key</string>

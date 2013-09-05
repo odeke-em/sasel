@@ -20,6 +20,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+
+
 public class SingleServerPage extends Activity {
 	public static final String SINGLE_SERVER_DATA_BACK = "singleServerDateBack";
 	private Server theServer; 
@@ -393,7 +395,7 @@ public class SingleServerPage extends Activity {
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					deleteItemInServer(R.id.aliasListView,itemPostion);
+					deleteItemInServer(R.id.aliasListView, itemPostion);
 					return;
 				}
 			});
@@ -434,55 +436,52 @@ public class SingleServerPage extends Activity {
 	};
 	
 	private void deleteItemInServer(int viewListId,int itemPosition){
-		
-		switch(viewListId){
+		//Historically, we were able to use switch-case but as of September 2013, we've had issues
+		//with id's being generated as public static int .. instead of public static final int ..
+		//Which makes the compiler interpreted as non-final 
 
-		case(R.id.userListView):{
+		if(viewListId == R.id.userListView){ 
 			displayedUserList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedUserList);
 			ListView targetListView = (ListView) findViewById(R.id.userListView);
 			targetListView.setAdapter(targetListAdapter);
 			theServer.removeUserByIndex(itemPosition);
-			break;
 		}
 		
-		case(R.id.osListView):{
+		else if (viewListId == R.id.osListView){
 			
 			displayedOsList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedOsList);
 			ListView targetListView = (ListView) findViewById(R.id.osListView);
 			targetListView.setAdapter(targetListAdapter);
 			theServer.removeOsByIndex(itemPosition);
-			break;
 		}	
-		case(R.id.ipListView):{
+		else if(viewListId == R.id.ipListView){
 			
 			displayedIpList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedIpList);
 			ListView targetListView = (ListView) findViewById(R.id.ipListView);
 			targetListView.setAdapter(targetListAdapter);
+			
 			theServer.removeIpByIndex(itemPosition);
-			break;
 		}
-		case(R.id.aliasListView):{
+		else if (viewListId == R.id.aliasListView){
 			displayedAliasList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedAliasList);
 			ListView targetListView = (ListView) findViewById(R.id.aliasListView);
 			targetListView.setAdapter(targetListAdapter);
 		
 			theServer.removeAliasByIndex(itemPosition);
-			break;
+
 		}
-		case(R.id.serverRoleListView):{
+		else if (viewListId == R.id.serverRoleListView){
 			
 			displayedServerRoleList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedServerRoleList);
 			ListView targetListView = (ListView) findViewById(R.id.serverRoleListView);
 			targetListView.setAdapter(targetListAdapter);
+
 			theServer.removeServerRoleByIndex(itemPosition);
-			break;
 		}				
-	
-		}
 	}
 }

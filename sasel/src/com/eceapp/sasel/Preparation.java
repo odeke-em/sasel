@@ -649,8 +649,7 @@ public class Preparation extends Activity {
 							Message signalUlMsg = new Message();
 							signalUlMsg.obj = UPLOAD_COMPLETE;
 							uploadStatusMsg.obj = UPLOAD_COMPLETE;
-							dataSpinnerHandler.sendMessage(signalUlMsg);
-							fileContent.delete(); //Let's delete that file
+							dataSpinnerHandler.sendMessage(signalUlMsg);	
 						}else{
 							showToast("Upload unsuccessful!\nData has not been cleared");
 						}
