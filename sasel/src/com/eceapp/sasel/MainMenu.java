@@ -208,6 +208,7 @@ public class MainMenu extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				Intent toParent = new Intent();
 				toParent.putExtra(Preparation.RETURNED_SERVERS_KEY, serverMap);
+				System.out.println("Server data to be uploaded in MainMenu"+serverMap);
 				setResult(RESULT_OK, toParent);
 				finish();
 			}

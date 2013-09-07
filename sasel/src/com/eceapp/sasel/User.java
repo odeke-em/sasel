@@ -17,7 +17,7 @@ public class User implements Serializable{
   private String _changeMakerName;
   private String DATE_FORMAT = "DDMMYYYY";
 
-  private byte[] _password; 
+  private byte[] _password;
   private ArrayList<String> userroles = null;
   
   protected static JSONParser parser = new JSONParser();

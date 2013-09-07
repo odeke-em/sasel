@@ -3,7 +3,6 @@ package com.eceapp.sasel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +16,7 @@ public class Server implements Serializable{
     Single entry immutable: Hostname, IP(s), Location, Function, OS(es)
     *Single entry co-related sets: Role, Username, Password, Date_of_Change
    */
+   	public static final int NOT_FOUND = -1;
     public static final int SUCCESS = 0xff;
     public static final int ERROR_CODE = ~SUCCESS;
     public static final int MIN_PORT=0;
@@ -40,22 +40,22 @@ public class Server implements Serializable{
     public final HashMap<String,String> nonIterValueKeys = new HashMap<String,String>();
     	
     public final 
-      HashMap<String, HashSet<String>> arrayValueKeys = new HashMap<String, HashSet<String>>();
+      HashMap<String, ArrayList<String>> arrayValueKeys = new HashMap<String, ArrayList<String>>();
                                           
     public static final char comma = ',';
     public static final char apostrophe='"'; 
 
-    private HashSet<String> _ipSet = null;
-    private HashSet<String> _osList = null;
-    private HashSet<String> _roleList = null;
-	protected HashSet<String> _aliasList = null;
+    private ArrayList<String> _ipList = null;
+    private ArrayList<String> _osList = null;
+    private ArrayList<String> _roleList = null;
+	protected ArrayList<String> _aliasList = null;
 
     public final static String 
        t255regex = "(1?[0-9]?[0-9]|2([0-5]{2}|[0-4][0-9]))",//0-255 range regex
        IPV4_REGEX = "^("+t255regex+"\\.){3}"+ t255regex+"$";
 
     public Server(
-    		String hostname, String location, ArrayList<String> ipSet, ArrayList<String> osList, 
+    		String hostname, String location, ArrayList<String> ipList, ArrayList<String> osList, 
     		ArrayList<String> aliasList, ArrayList<String>roleList )throws Exception{ 
 
       if (hostname == null)
@@ -64,8 +64,8 @@ public class Server implements Serializable{
       if (location == null)
         throw new Exception("Null location passed in.");
 
-      if (ipSet == null)
-        throw new Exception("Null ipSet passed in.");
+      if (ipList == null)
+        throw new Exception("Null ipList passed in.");
 
       if (osList == null)
         throw new Exception("Null osList passed in.");
@@ -75,20 +75,20 @@ public class Server implements Serializable{
       if (roleList == null)
         throw new Exception("Null roleList passed in.");
       try{
-        validate_ipSet(ipSet, IPV4_REGEX);
+        validateIpList(ipList, IPV4_REGEX);
       } catch (Exception e){
         e.printStackTrace();
       }
       
-      this._ipSet = new HashSet<String>();
-      this._osList = new HashSet<String>(); 
-      this._roleList = new HashSet<String>();
-      this._aliasList = new HashSet<String>();
+      this._ipList = new ArrayList<String>();
+      this._osList = new ArrayList<String>(); 
+      this._roleList = new ArrayList<String>();
+      this._aliasList = new ArrayList<String>();
       
       this._hostname = hostname;
       this._location = location;
       
-      this._ipSet.addAll(ipSet);
+      this._ipList.addAll(ipList);
       this._osList.addAll(osList);
       this._aliasList.addAll(aliasList);
       this._roleList.addAll(roleList);
@@ -97,17 +97,17 @@ public class Server implements Serializable{
 
       this.nonIterValueKeys.put(SERVERNAME_KEY, _hostname);
       this.nonIterValueKeys.put(LOCATION_KEY, _location);
-      this.arrayValueKeys.put(IPs_KEY, _ipSet);
+      this.arrayValueKeys.put(IPs_KEY, _ipList);
       this.arrayValueKeys.put(OS_LIST_KEY, _osList);
       this.arrayValueKeys.put(ALIASES_KEY, _aliasList);
       this.arrayValueKeys.put(ROLE_KEY, _roleList);
     }
 
     public Server(){
-        this._ipSet = new HashSet<String>(); 
-        this._osList = new HashSet<String>(); 
-        this._roleList = new HashSet<String>();
-        this._aliasList = new HashSet<String>();
+        this._ipList = new ArrayList<String>(); 
+        this._osList = new ArrayList<String>(); 
+        this._roleList = new ArrayList<String>();
+        this._aliasList = new ArrayList<String>();
 
         this._hostname = new String();
         this._location = new String();
@@ -177,51 +177,32 @@ public class Server implements Serializable{
     }
     
     public boolean removeUser(User u){
-      boolean userRemoved = false;
-      int foundIndex;
-      if (u != null){
-        while (users.isEmpty() == false){
-          foundIndex = users.indexOf(u);
-          if (foundIndex == -1)
-            break; 
-          users.remove(foundIndex);
-          userRemoved = true;
-        }
-      }
-      return userRemoved;
+      return (users != null) && users.remove(u);
     }
 
     public boolean addUser(User u){
-      boolean userAdded = false;
-      if (u != null){
-        try{
-          users.add(0,u);
-	  userAdded = true;
-        } catch(Exception e){
-	  e.printStackTrace();
-        }
-      }
-      return userAdded;
+    	return (users != null) && (users.indexOf(u) == NOT_FOUND) && (users.add(u));
     }
     
     public JSONObject getJSON(){
-      HashMap<String,Object>jObj = new HashMap<String,Object>();
-      jObj.put(SERVERNAME_KEY, this._hostname);
-      jObj.put(OS_LIST_KEY, getOSList());
+      HashMap<String,Object>reprJSON = new HashMap<String,Object>();
+      reprJSON.put(SERVERNAME_KEY, this._hostname);
+      reprJSON.put(LOCATION_KEY, this._location);
+      reprJSON.put(OS_LIST_KEY, getOSList());
       
-      ArrayList<String> usersArray = new ArrayList<String>();
+      ArrayList<String> usersJSONArray = new ArrayList<String>();
       for (User u : users){
-	      usersArray.add(u.getJSON().toJSONString());
+	      usersJSONArray.add(u.toString());
       }
 
-      jObj.put(USERS_KEY, usersArray);
-      jObj.put(IPs_KEY, getIPList());
-      jObj.put(ALIASES_KEY, getAliasList());
+      reprJSON.put(USERS_KEY, usersJSONArray);
+      reprJSON.put(IPs_KEY, getIPList());
+      reprJSON.put(ALIASES_KEY, getAliasList());
 
-      jObj.put(ROLE_KEY, getRolesList());
-      jObj.put(LOCATION_KEY, this._location);
+      reprJSON.put(ROLE_KEY, getRolesList());
+
       
-      return new JSONObject(jObj);
+      return new JSONObject(reprJSON);
     }
     
     
@@ -231,7 +212,6 @@ public class Server implements Serializable{
 
     @Override
     public String toString(){
-      //Private to make sure that all the needed variables have been instantiated
       return (getJSON()).toString();
     }
 
@@ -239,7 +219,7 @@ public class Server implements Serializable{
       return users.size();
     }
 
-    public boolean validate_ipSet(ArrayList<String> array, String ipRegex) 
+    public boolean validateIpList(ArrayList<String> array, String ipRegex) 
     throws Exception{
       //Return true iff every member in the array confirms to the desired pattern
       if ((ipRegex == null) | (array == null))
@@ -278,7 +258,7 @@ public class Server implements Serializable{
             return true;
         }
       }else if (IPs_KEY.equals(attrName)){
-    	for (String ip : this._ipSet){
+    	for (String ip : this._ipList){
     	  if ((queryPattern.matcher(ip)).find())
     	    return true;
     	  }
@@ -306,7 +286,7 @@ public class Server implements Serializable{
       
       else if (attrPattern.matcher(IPs_KEY).find()){
     	  Pattern queryForIP = Pattern.compile(query, Pattern.CASE_INSENSITIVE); 
-    	  for (String ip : this._ipSet){
+    	  for (String ip : this._ipList){
     		  System.out.println("CurIP "+ip);
     		  if ((queryForIP.matcher(ip)).find()) return true;
     	  }
@@ -352,7 +332,7 @@ public class Server implements Serializable{
     
     public ArrayList<String> getIPList(){
     	ArrayList<String>ipCopy = new ArrayList<String>();
-    	ipCopy.addAll(this._ipSet);
+    	ipCopy.addAll(this._ipList);
     	
     	return ipCopy;
     }
@@ -372,31 +352,39 @@ public class Server implements Serializable{
     }
   
     public boolean addIP(String newIP){	
-    	return this._ipSet.add(newIP);
+    	if (this._ipList == null) return false;
+    	return (this._ipList.indexOf(newIP) == NOT_FOUND) && (this._ipList.add(newIP));
     }
     
-    public boolean addAlias(String newAliases){
-    	return this._aliasList.add(newAliases);
+    public boolean addAlias(String newAlias){
+    	if (this._aliasList == null) return false;
+    	return (this._aliasList.indexOf(newAlias) == NOT_FOUND) && (this._aliasList.add(newAlias));
     }	
     
    public boolean addOS(String newOS){
-   		return this._osList.add(newOS);   	
+	   if (this._osList == null) return false;
+   		return (this._osList.indexOf(newOS) == NOT_FOUND) && (this._osList.add(newOS));   	
    }
    
    public boolean addRole(String newRole){
-	   	return this._roleList.add(newRole);
+	   if (this._roleList == null) return false;
+	   return (this._roleList.indexOf(newRole) == NOT_FOUND) && (this._roleList.add(newRole));
    }
    
    public void setLocation(String newLocation){
-	   this._location = newLocation;
+	   if (newLocation != null)
+		   this._location = newLocation;
    }
+   
    public void setServerName(String newServerName){
 	   this._hostname = newServerName;
    }
    
-   public void removeUserByIndex(int index){
-	   if (index >= 0 && index < this.users.size())
-		   this.users.remove(index);
+   public boolean removeUserByIndex(int index){
+	 if (!(index >= 0 && index < this.users.size())) return false;
+	 
+	 this.users.remove(index);
+	 return true;
    } 
    
    public void removeOsByIndex(int index){
@@ -405,8 +393,8 @@ public class Server implements Serializable{
    }
    
    public void removeIpByIndex(int index){
-	   if (index >= 0 && index < this._ipSet.size())
-		   this._ipSet.remove(index);
+	   if (index >= 0 && index < this._ipList.size())
+		   this._ipList.remove(index);
    }
    
    public void removeAliasByIndex(int index){

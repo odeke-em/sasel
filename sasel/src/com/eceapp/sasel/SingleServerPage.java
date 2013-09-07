@@ -98,8 +98,9 @@ public class SingleServerPage extends Activity {
 				String passWord = new String (aUser.getPassword(),"UTF-8");
 			String userRole = aUser.getRole();
 			displayedUserList.add(userName+"   -   "+""+passWord+"   -   "+""+userRole);
-			System.out.println(userList.size());
+			System.out.println("userList "+userList);
 		}
+		
 	    targetListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayedUserList);
 		ListView userListView = (ListView) findViewById(R.id.userListView);
 		userListView.setAdapter(targetListAdapter);  
@@ -112,7 +113,7 @@ public class SingleServerPage extends Activity {
 	    targetListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayedAliasList);
 		ListView aliaseListView = (ListView) findViewById(R.id.aliasListView);
 		aliaseListView.setAdapter(targetListAdapter);    
-		aliaseListView.setOnItemLongClickListener(deleteAliaseListener);
+		aliaseListView.setOnItemLongClickListener(deleteAliasListener);
 		
 		//set server role list
 		displayedServerRoleList = theServer.getRolesList();
@@ -125,9 +126,8 @@ public class SingleServerPage extends Activity {
 	}
 	
 	private boolean isServerNameUnique(String serverName){
-		for (int i=0;i<serverNames.size();i++){
-			if (serverNames.get(i).equals(serverName) && (!serverName.equals(originalName)) ){
-				
+		for (String iterServerName: serverNames){
+			if (iterServerName.equals(serverName) && ! serverName.equals(originalName)){	
 				return false;
 			}
 		}
@@ -155,9 +155,7 @@ public class SingleServerPage extends Activity {
 			System.out.println("singSRV back "+this.theServer);
 			setResult(RESULT_OK,intent);
 			finish();	
-			
 		}
-
 	}		
 
 
@@ -180,7 +178,7 @@ public class SingleServerPage extends Activity {
 				//String currentDate = DateTime(d_fmt);
 				User newUser = new User(newUserName, newUserRole, newPassWord, googleAccountName, d_fmt.format(currentDate));
 				System.out.println("userCreatd "+newUser);
-				theServer.addUser(newUser);
+				if (theServer.addUser(newUser) != true) return;
 				
 				//======Retrieve the data from the newly created user, and display onto the UI =======
 				String userName = newUser.getUserName();
@@ -189,7 +187,7 @@ public class SingleServerPage extends Activity {
 				passWord = new String (newUser.getPassword(),"UTF-8");
 		
 				String userRole = newUser.getRole();
-				displayedUserList.add(userName+"   -   "+""+passWord+"   -   "+""+userRole);
+				displayedUserList.add(0, userName+"   -   "+""+passWord+"   -   "+""+userRole);
 				ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedUserList);
 				ListView targetListView = (ListView) findViewById(R.id.userListView);
 				targetListView.setAdapter(targetListAdapter);
@@ -207,6 +205,7 @@ public class SingleServerPage extends Activity {
 		if (theET == null || ! (theET instanceof EditText)) return;
 		theET.setText("");
 	}
+	
 	public void addOsHandler(View v){	
 		EditText addOsEditText = (EditText)findViewById(R.id.addOsEditText); 
 		String newOs = addOsEditText.getText().toString();
@@ -236,11 +235,11 @@ public class SingleServerPage extends Activity {
 		if (newIp.length()==0 ){
 			addIpEditText.setError("Can not be empty");	
 		}else if (ipValidation==false){
-			addIpEditText.setError("Invalid Ip");	
-			
+			addIpEditText.setError("Invalid Ip");
 		}else{
 			if (this.theServer.addIP(newIp))
 				displayedIpList.add(0, newIp);
+			
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.theServer.getIPList());
 			ListView targetListView = (ListView) findViewById(R.id.ipListView);
 			targetListView.setAdapter(targetListAdapter);
@@ -263,7 +262,6 @@ public class SingleServerPage extends Activity {
 			aliaseListView.setAdapter(aliaseListAdapter);
 			addAliasEditText.setText("");	
 		}
-			
 	}
 	
 	public void addServerRoleHandler(View v){
@@ -375,7 +373,7 @@ public class SingleServerPage extends Activity {
 	    }
 	};
 	
-	private OnItemLongClickListener deleteAliaseListener = new OnItemLongClickListener(){
+	private OnItemLongClickListener deleteAliasListener = new OnItemLongClickListener(){
 		
 		@Override
 	    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id){
@@ -384,7 +382,7 @@ public class SingleServerPage extends Activity {
 			final int itemPostion = position;
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-			builder.setTitle("Delete Aliase: "+nameForDeletion+"?");  
+			builder.setTitle("Delete Alias: "+nameForDeletion+"?");  
 			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -435,53 +433,55 @@ public class SingleServerPage extends Activity {
 	    }
 	};
 	
-	private void deleteItemInServer(int viewListId,int itemPosition){
+	private void deleteItemInServer(int viewListId, int itemPosition){
 		//Historically, we were able to use switch-case but as of September 2013, we've had issues
 		//with id's being generated as public static int .. instead of public static final int ..
-		//Which makes the compiler interpreted as non-final 
-
+		//Which makes the compiler interpreted as non-final
 		if(viewListId == R.id.userListView){ 
-			displayedUserList.remove(itemPosition);
+			
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedUserList);
 			ListView targetListView = (ListView) findViewById(R.id.userListView);
+
+			if (theServer.removeUserByIndex(itemPosition) == true)
+				displayedUserList.remove(itemPosition);
 			targetListView.setAdapter(targetListAdapter);
-			theServer.removeUserByIndex(itemPosition);
 		}
 		
 		else if (viewListId == R.id.osListView){
-			
 			displayedOsList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedOsList);
 			ListView targetListView = (ListView) findViewById(R.id.osListView);
-			targetListView.setAdapter(targetListAdapter);
-			theServer.removeOsByIndex(itemPosition);
-		}	
-		else if(viewListId == R.id.ipListView){
 			
+			theServer.removeOsByIndex(itemPosition);
+			targetListView.setAdapter(targetListAdapter);
+		}
+		
+		else if(viewListId == R.id.ipListView){
 			displayedIpList.remove(itemPosition);
-			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedIpList);
+
+			theServer.removeIpByIndex(itemPosition);
+			
+			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayedIpList);
 			ListView targetListView = (ListView) findViewById(R.id.ipListView);
 			targetListView.setAdapter(targetListAdapter);
-			
-			theServer.removeIpByIndex(itemPosition);
 		}
+		
 		else if (viewListId == R.id.aliasListView){
 			displayedAliasList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedAliasList);
 			ListView targetListView = (ListView) findViewById(R.id.aliasListView);
-			targetListView.setAdapter(targetListAdapter);
-		
-			theServer.removeAliasByIndex(itemPosition);
-
-		}
-		else if (viewListId == R.id.serverRoleListView){
 			
+			theServer.removeAliasByIndex(itemPosition);
+			targetListView.setAdapter(targetListAdapter);
+		}
+		
+		else if (viewListId == R.id.serverRoleListView){			
 			displayedServerRoleList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedServerRoleList);
 			ListView targetListView = (ListView) findViewById(R.id.serverRoleListView);
-			targetListView.setAdapter(targetListAdapter);
-
+			
 			theServer.removeServerRoleByIndex(itemPosition);
+			targetListView.setAdapter(targetListAdapter);
 		}				
 	}
 }

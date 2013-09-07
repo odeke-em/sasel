@@ -67,8 +67,8 @@ public class Preparation extends Activity {
 	public static final String ENCRYPTION_KEY = "encryptionKey";
 	public static final String SERVER_MAP	= "serverMap";
 
-	//private static final String DEV_IV_KEY = "1234567890123456";
-	//private static final String DEV_ENCRYPTION_KEY = "1234567890123456";
+	private static final String DEV_IV_KEY = "1234567890123456";
+	private static final String DEV_ENCRYPTION_KEY = "1234567890123456";
 	private Handler encryptionCredentialHandler;
 	private Handler dataSpinnerHandler;
 	private GoogleAccountCredential credential = null;
@@ -120,10 +120,11 @@ public class Preparation extends Activity {
 			return;
 		}
 		*/
-		//EditText iv_ET=(EditText)findViewById(R.id.ivKey);
-		//iv_ET.setText(DEV_IV_KEY);
-		//EditText encKey_ET =(EditText)findViewById(R.id.encryptionKey);
-		//encKey_ET.setText(DEV_ENCRYPTION_KEY);
+		
+		EditText iv_ET=(EditText)findViewById(R.id.ivKey);
+		iv_ET.setText(DEV_IV_KEY);
+		EditText encKey_ET =(EditText)findViewById(R.id.encryptionKey);
+		encKey_ET.setText(DEV_ENCRYPTION_KEY);
 
 		encryptionCredentialHandler = new Handler(){
 			@Override
@@ -576,6 +577,7 @@ public class Preparation extends Activity {
 			for ( Server s: serverMap.values()){
 				serverArray.add(s.toJSONString());
 			}
+			
 			serverJSON.put(SERVERS_KEY, serverArray);
 			System.err.println("Before encryption "+serverJSON.toJSONString());
 			

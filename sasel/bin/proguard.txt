@@ -31,12 +31,12 @@
 # onClick res/layout/activity_main_menu.xml #generated:18
 -keepclassmembers class * { *** exitServer(...); }
 
-# onClick res/layout/activity_preparation.xml #generated:29
+# onClick res/layout/activity_preparation.xml #generated:30
 -keepclassmembers class * { *** openSASELBook(...); }
 
 # onClick res/layout/activity_single_server_page.xml #generated:277
 -keepclassmembers class * { *** saveSingleServer(...); }
 
-# onClick res/layout/activity_preparation.xml #generated:84
+# onClick res/layout/activity_preparation.xml #generated:85
 -keepclassmembers class * { *** selectNewAccount(...); }
 
