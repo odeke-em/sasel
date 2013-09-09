@@ -42,6 +42,7 @@ public class MainMenu extends Activity {
 		
 		serverMap = (HashMap<String, Server>)extras.get(Preparation.SERVER_MAP);
 		googleAccountName = extras.getString(Preparation.GOOGLE_ACCOUNT_NAME);
+		System.out.println("In MainMenu Oncreate gAccountName "+googleAccountName);
 		
 		adapter = new ArrayAdapter<String>(
 				this,android.R.layout.simple_list_item_1, displayedServerList
@@ -133,6 +134,7 @@ public class MainMenu extends Activity {
 		srvNames.addAll(serverMap.keySet());
 		return srvNames;
 	}
+
 	public void createNewServer(View v){
 		checkedOutServerName = null; //Not checking-out any existing server
 		Intent newServerIntent = new Intent(v.getContext(), SingleServerPage.class);

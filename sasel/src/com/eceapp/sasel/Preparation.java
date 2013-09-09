@@ -310,6 +310,7 @@ public class Preparation extends Activity {
 				toggleSpinner(false);
 			}
 		}
+		
 		/*
 		Intent ssPIntent = new Intent(this, SingleServerPage.class);
 		ssPIntent.putExtra(MainMenu.SINGLE_SERVER_DATA, new Server());
@@ -329,7 +330,8 @@ public class Preparation extends Activity {
 		if (dataExists){
 			Intent intent = new Intent(dataContext, MainMenu.class);
 			intent.putExtra(SERVER_MAP, this.serverMap);
-
+			intent.putExtra(GOOGLE_ACCOUNT_NAME, credential.getSelectedAccountName());
+			
 			startActivityForResult(intent, MAIN_SERVERS_POPULATED);
 		}else{
 			Looper.prepare();

@@ -63,6 +63,7 @@ public class SingleServerPage extends Activity {
 		
 		theServer = (Server)extras.get(MainMenu.SINGLE_SERVER_DATA);    
 		googleAccountName = extras.getString(Preparation.GOOGLE_ACCOUNT_NAME);
+		System.out.println("Google account name "+googleAccountName);
 		serverNames = (ArrayList<String>) extras.get(MainMenu.SERVER_NAME_LIST);    
 		originalName = theServer.getName();
 				
