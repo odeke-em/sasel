@@ -144,11 +144,9 @@ public class SingleServerPage extends Activity {
 		if (isServerNameUnique(serverName)==false){ 
 			serverNameEditText.setError("Server name already exists");
 			
-		}
-		else if(serverName.length()==0) {
+		} else if(serverName.length()==0) {
 			serverNameEditText.setError("Can not be empty");
-		}
-		else{
+		} else{
 			this.theServer.setLocation(serverLocation);
 			this.theServer.setServerName(serverName);		
 			Intent intent = getIntent();
@@ -160,7 +158,7 @@ public class SingleServerPage extends Activity {
 	}		
 
 
-	public void addUserHandler(View v){
+	public void addUserHandler(View v) {
 		try {
 			EditText userNameEditText = (EditText)findViewById(R.id.userNameEditText);
 			EditText passWordEditText = (EditText)findViewById(R.id.passWordEditText);
@@ -170,9 +168,9 @@ public class SingleServerPage extends Activity {
 			System.out.println(newUserName+"-"+newUserRole);
 			byte[] newPassWord = ((String)passWordEditText.getText().toString()).getBytes();
 			
-			if (newUserName.length()==0){
+			if (newUserName.length()==0) {
 				userNameEditText.setError("Can not be empty");	
-			}else{
+			} else {
 				//Constructor => User(String name, String role, byte[] password, String changerName, String initDate)
 				SimpleDateFormat d_fmt = new SimpleDateFormat("yyyymmdd:HHMMSS", Locale.getDefault());
 				Date currentDate = new Date();

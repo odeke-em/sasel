@@ -10,7 +10,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class Server implements Serializable{
+public class Server extends Object implements Serializable{
    private static final long serialVersionUID = 0xfffeL;
    /*
     Single entry immutable: Hostname, IP(s), Location, Function, OS(es)
@@ -19,8 +19,8 @@ public class Server implements Serializable{
    	public static final int NOT_FOUND = -1;
     public static final int SUCCESS = 0xff;
     public static final int ERROR_CODE = ~SUCCESS;
-    public static final int MIN_PORT=0;
-    public static final int MAX_PORT=(1 << 16); 
+    public static final int MIN_PORT = 0;
+    public static final int MAX_PORT = (1 << 16); 
     
     protected final static JSONParser parser = new JSONParser();
     protected ArrayList<User> users = null; 
@@ -149,25 +149,25 @@ public class Server implements Serializable{
       boolean allCleared = false;
       try{
 	      if (SUPER_USER_ACCESS == true){ 
-	        users.clear(); 
+	        this.users.clear(); 
 	        allCleared = true;
         }
       } catch(Exception e){
         e.printStackTrace();
       }
+      
       return allCleared;
     } 
 
     public boolean isValidIP(String ip){
       Pattern ipPat = Pattern.compile(IPV4_REGEX);
-      Matcher m     = ipPat.matcher(ip);
+      Matcher ipMatcher    = ipPat.matcher(ip);
 
-      return m.find();
+      return ipMatcher.find();
     }
 
     public String getName(){
-      String nameClone = _hostname;
-      return nameClone;
+      return new String(this._hostname);
     }
 
     public ArrayList<String> getAliasList(){
@@ -200,11 +200,9 @@ public class Server implements Serializable{
       reprJSON.put(ALIASES_KEY, getAliasList());
 
       reprJSON.put(ROLE_KEY, getRolesList());
-
       
       return new JSONObject(reprJSON);
     }
-    
     
     public String toJSONString(){
       return (getJSON()).toString();
@@ -219,8 +217,7 @@ public class Server implements Serializable{
       return users.size();
     }
 
-    public boolean validateIpList(ArrayList<String> array, String ipRegex) 
-    throws Exception{
+    public boolean validateIpList(ArrayList<String> array, String ipRegex) {
       //Return true iff every member in the array confirms to the desired pattern
       if ((ipRegex == null) | (array == null))
         return false;
@@ -230,8 +227,9 @@ public class Server implements Serializable{
 
       for (String ip : array){ 
         match = pat.matcher(ip); 
-        if (! match.find())
-          throw new Exception(ip + " is an invalid ip");
+        if (! match.find()) {
+          return false;
+        }
       }
       return true;
     }
@@ -239,7 +237,7 @@ public class Server implements Serializable{
     public boolean changeName(String newName){
       boolean nameChanged = false;
       if ((newName != null) && (_hostname != newName)){
-        _hostname = newName;
+        this._hostname = newName;
         nameChanged = true;
       }
       return nameChanged;
@@ -287,7 +285,7 @@ public class Server implements Serializable{
       else if (attrPattern.matcher(IPs_KEY).find()){
     	  Pattern queryForIP = Pattern.compile(query, Pattern.CASE_INSENSITIVE); 
     	  for (String ip : this._ipList){
-    		  System.out.println("CurIP "+ip);
+    		  //System.out.println("CurIP "+ip);
     		  if ((queryForIP.matcher(ip)).find()) return true;
     	  }
       }
@@ -303,12 +301,13 @@ public class Server implements Serializable{
       }
       
       for (String arrayValueKey : arrayValueKeys.keySet()){
-    	System.out.println("arrItVK "+arrayValueKey + " query "+query);
+    	//System.out.println("arrItVK "+arrayValueKey + " query "+query);
         if (searchByAttribute(arrayValueKey, query))
           return true;
       }
 
       ArrayList<User> userMatches = searchUsers(query);
+      //System.out.println("UserMatches "+userMatches);
       if (userMatches != null){ //Will handle attribute reporting later
     	  return (!userMatches.isEmpty());
       }
@@ -406,5 +405,5 @@ public class Server implements Serializable{
 	   if (index >= 0 && index < this._roleList.size())
 		   this._roleList.remove(index);
    }  
-
+   
 }

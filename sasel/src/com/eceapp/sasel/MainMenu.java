@@ -2,6 +2,7 @@ package com.eceapp.sasel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainMenu extends Activity {
 	public static final String SINGLE_SERVER_DATA = "singleServerData";
@@ -55,6 +57,7 @@ public class MainMenu extends Activity {
 		
 		//Populate the listView with all servers available
 		loadAllServers();
+		
 
 		//Setting up the search method here
 		final EditText searchServer_et = (EditText)findViewById(R.id.searchServersET);
@@ -70,27 +73,31 @@ public class MainMenu extends Activity {
 				String searchParams = edT.toString();
 				displayedServerList.clear();
 				searchServer_et.setError(null);
-				
+
 				//No parameters specified, do nothing
-				if (searchParams.length() == 0){
+				if (searchParams.length() == 0) {
 					loadAllServers();
-					return;
+					
+				} else {
+					//Get the listView cleared in preparation for search results
+					adapter.notifyDataSetChanged();
+				
+					ArrayList<Server> searchResults = searchServers(searchParams);
+
+					if (searchResults.size() == 0) {
+						searchServer_et.setError("No server found!");
+					} else {
+				
+						for (Server s: searchResults){
+							displayedServerList.add(s.getName());
+							System.out.println("Found server "+s);
+						}
+					}
+					
+					
 				}
 				
-				//Get the listView cleared in preparation for search results
-				adapter.notifyDataSetChanged();
-				
-				ArrayList<Server> searchResults = searchServers(searchParams);
-				
-				if (searchResults.size()==0) {
-					searchServer_et.setError("No server found!");
-					return;
-				}
-				
-				for (Server s: searchResults){
-					displayedServerList.add(s.getName());
-					System.out.println("Found server "+s);
-				}
+				updateServerCountInfo(); //displayedServerList.size());
 				adapter.notifyDataSetChanged();
 			}
 			
@@ -122,13 +129,31 @@ public class MainMenu extends Activity {
 		adapter.notifyDataSetChanged();
 	}
 	
-	public void loadAllServers(){
+	public void loadAllServers() {
 		for (Server s : serverMap.values()){
 			displayedServerList.add(s.getName());
 		}
 		adapter.notifyDataSetChanged();
+
+		updateServerCountInfo();
 	}
 
+	private int getNumDisplayedServers() {
+		return displayedServerList == null ? -1 : displayedServerList.size();
+	}
+	
+	private void updateServerCountInfo() {
+		//Helper function to update the text view that shows the
+		//the number of servers on display ie the size of displayedServerList
+		//at the current instance in time
+		TextView metaInfoTextView = (TextView) findViewById(R.id.totalMetaInfo);
+		String foundServerInfo = String.format(
+				Locale.CANADA,"Found: %d of %d servers", getNumDisplayedServers(), serverMap.size()
+		);
+		
+		metaInfoTextView.setText(foundServerInfo);
+	}
+	
 	public ArrayList<String> getServerListNames(){
 		ArrayList<String> srvNames = new ArrayList<String>();
 		srvNames.addAll(serverMap.keySet());
@@ -181,6 +206,8 @@ public class MainMenu extends Activity {
 					Server st = serverMap.remove(nameForDeletion);
 					if (st != null){
 						displayedServerList.remove(nameForDeletion);
+						
+						updateServerCountInfo();
 						adapter.notifyDataSetChanged();
 					}
 				}
@@ -235,7 +262,7 @@ public class MainMenu extends Activity {
 		getMenuInflater().inflate(R.menu.main_menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode == WAITING_FOR_SINGLE_SERVER_DATA){
@@ -252,9 +279,11 @@ public class MainMenu extends Activity {
 				
 				serverMap.put(newServerName, newServer);
 				displayedServerList.remove(checkedOutServerName);
-				displayedServerList.add(0, newServerName);
-				adapter.notifyDataSetChanged();
 				
+				displayedServerList.add(0, newServerName);
+				updateServerCountInfo();
+				
+				adapter.notifyDataSetChanged();
 			}
 			
 			else if (resultCode == RESULT_CANCELED){

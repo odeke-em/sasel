@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.json.simple.JSONArray;
@@ -47,6 +48,8 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
 public class Preparation extends Activity {
+	private final boolean DEBUG = true;
+	
 	public static final String SERVERS_KEY = "servers";
 
 	public static final int REQUEST_ACCOUNT_PICKER = 0xd;
@@ -54,29 +57,35 @@ public class Preparation extends Activity {
 	public static final String DEFAULT_ENCRYPTED_FILENAME = "serverManager.ece";
 	
 	public static final int EOF = -1;
-	public static final int NO_PREVIOUS_FILE_DETECTED = 0;
-	public static final int DUPLICATE_FILES_DETECTED = 1;
-	public static final int SINGLE_VALID_FILE_DETECTED = 2;
-	public static final int MAIN_SERVERS_POPULATED = 3;
-	public static final int CHANGING_ENCRYPTION_KEYS = 4;
+	public static final int NO_PREVIOUS_FILE_DETECTED 	= 0;
+	public static final int DUPLICATE_FILES_DETECTED 	= 1;
+	public static final int SINGLE_VALID_FILE_DETECTED 	= 2;
+	public static final int MAIN_SERVERS_POPULATED 		= 3;
+	public static final int CHANGING_ENCRYPTION_KEYS 	= 4;
 	public static final int CHANGING_ENCRYPTION_KEYS_FOR_UPLOAD = 5;
 	
 	public static final String RETURNED_SERVERS_KEY = "returnedServers";
 	public static final String GOOGLE_ACCOUNT_NAME = "googleAccountName";
+	
 	public static final String IV_KEY = "ivKey";
+	public static final String SERVER_MAP = "serverMap";
 	public static final String ENCRYPTION_KEY = "encryptionKey";
-	public static final String SERVER_MAP	= "serverMap";
+
 
 	private static final String DEV_IV_KEY = "1234567890123456";
 	private static final String DEV_ENCRYPTION_KEY = "1234567890123456";
-	private Handler encryptionCredentialHandler;
+	
 	private Handler dataSpinnerHandler;
+	private Handler encryptionCredentialHandler;
+
 	private GoogleAccountCredential credential = null;
 	private Uri fileUri;
 	private Drive service = null;
+	
 	private CipherAlgo cypherAl = null;
 	private String ivKey;
 	private String encryptionKey;
+	
 	private HashMap<String,Server> serverMap = new HashMap<String,Server>();
 	
 	
@@ -232,7 +241,7 @@ public class Preparation extends Activity {
 					System.out.println("extras "+extras);
 					Object returnedData = extras.get(RETURNED_SERVERS_KEY);
 					if (returnedData != null){
-						serverMap = (HashMap<String, Server>)returnedData;
+						serverMap = (HashMap<String, Server>) returnedData;
 						
 						AlertDialog.Builder builder = new AlertDialog.Builder(this);
 						final Context dataContext = this;
@@ -327,13 +336,13 @@ public class Preparation extends Activity {
 
 	private void manageServers(boolean dataExists){
 		final Context dataContext = this;
-		if (dataExists){
+		if (dataExists) {
 			Intent intent = new Intent(dataContext, MainMenu.class);
 			intent.putExtra(SERVER_MAP, this.serverMap);
 			intent.putExtra(GOOGLE_ACCOUNT_NAME, credential.getSelectedAccountName());
 			
 			startActivityForResult(intent, MAIN_SERVERS_POPULATED);
-		}else{
+		} else {
 			Looper.prepare();
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			
@@ -373,10 +382,11 @@ public class Preparation extends Activity {
 		}
 	}
 
-	public void toggleSpinner(boolean showSpinner){
+	public void toggleSpinner(boolean showSpinner) {
 		int startButtonVisibility = View.VISIBLE;
 		int progressSpinnerVisibility = View.INVISIBLE;
-		if (showSpinner){
+		
+		if (showSpinner) {
 			startButtonVisibility = View.INVISIBLE;
 			progressSpinnerVisibility = View.VISIBLE;
 		}
@@ -388,25 +398,25 @@ public class Preparation extends Activity {
 		progressBar.setVisibility(progressSpinnerVisibility);
 	}
 	
-	private Drive getDriveService(GoogleAccountCredential credential){
+	private Drive getDriveService(GoogleAccountCredential credential) {
 		return new Drive.Builder( 
 		   AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential
 		   ).build();
 	}
 
-	public void showToast(final String toast){
-		runOnUiThread( new Runnable(){
+	public void showToast(final String toast) {
+		runOnUiThread( new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_LONG).show();
 			}
 		});
 	}
 
-	//Single-thread based function that Downloads off your drive the first file 
+	//Thread based function that downloads off your drive the first file 
 	//whose name matches our encrypted file. Once downloaded, the file is then decrypted
-	private void getDecryptedFile(){
-		Thread downloader_th = new Thread( new Runnable(){
+	private void getDecryptedFile() {
+		Thread downloader_th = new Thread( new Runnable() {
 			@Override
 			public void run(){
 				Message dlStatusMsg = new Message();
@@ -435,12 +445,11 @@ public class Preparation extends Activity {
 	
 						if (fileStream != null){
 							String buffer = "";
-							int bufInt=0;
+							Scanner streamScanner = new Scanner(fileStream, "UTF-8");
 							
-							do{
-								bufInt = fileStream.read();
-								buffer += (char)bufInt;
-							}while((bufInt != EOF));
+							while (streamScanner.hasNext()) {
+								buffer += streamScanner.next();
+							}
 	
 							byte[] decodedData = Base64.decode(buffer, Base64.DEFAULT);
 	
@@ -576,7 +585,7 @@ public class Preparation extends Activity {
 			JSONObject serverJSON = new JSONObject();
 			JSONArray serverArray = new JSONArray();
 
-			for ( Server s: serverMap.values()){
+			for ( Server s: serverMap.values()) {
 				serverArray.add(s.toJSONString());
 			}
 			
@@ -606,7 +615,7 @@ public class Preparation extends Activity {
 	private void saveFileToDrive() {
 		Thread upload_th = new Thread( new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				try{
 					//File's binary content
 					java.io.File fileContent = new java.io.File(fileUri.getPath());
@@ -635,16 +644,22 @@ public class Preparation extends Activity {
 							showToast("File uploaded: " + file.getTitle());
 							showToast("File ID: "+file.getId());
 						}
-					}else {	//eceData.ece exists
-						System.out.println(result.get(0).get("id"));
-						System.out.print("i am here!");
+					}else {	//The file exists
 						String existingFileId = (String) result.get(0).get("id");
-						System.out.println(existingFileId);
-						File updatedFile = service.files().update(existingFileId, body, mediaContent).execute();
+						if (DEBUG) {
+							System.out.println("File successfully found");
+							System.out.println(existingFileId);
+						}
 						
+						File updatedFile = service.files().update(existingFileId, body, mediaContent).execute();
+
 						if (updatedFile != null){
-							showToast("File uploaded: " + updatedFile.getTitle());
-							showToast("File ID: "+updatedFile.getId());
+							String uploadStatus = String.format(
+								"File upload complete!\nUploaded file: %s\n FileID: %s",
+								updatedFile.getTitle(), updatedFile.getId()
+							);
+						
+							showToast(uploadStatus);
 					
 							//Let's clear the serverMap of entered data
 							serverMap.clear();

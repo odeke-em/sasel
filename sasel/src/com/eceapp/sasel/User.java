@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class User implements Serializable{
+public class User extends Object implements Serializable {
+  private final boolean DEBUG = false;
   private static final long serialVersionUID = 0xfffeL;
   private String _username;
   private String _role;
@@ -18,7 +20,6 @@ public class User implements Serializable{
   private String DATE_FORMAT = "DDMMYYYY";
 
   private byte[] _password;
-  private ArrayList<String> userroles = null;
   
   protected static JSONParser parser = new JSONParser();
 
@@ -29,9 +30,10 @@ public class User implements Serializable{
   public static final String DATE_OF_CHANGE_KEY  = "dateOfPasswordChange"; 
 
   public static final String[] nonIterValueKeys = {
-    USERNAME_KEY, DATE_OF_CHANGE_KEY,CHANGE_MAKER_KEY};
+    USERNAME_KEY, DATE_OF_CHANGE_KEY,CHANGE_MAKER_KEY
+  };
 
-  public static final String[] arrayValueKeys = { ROLE_KEY };
+  public static final String[] arrayValueKeys = {ROLE_KEY};
 
   public static final int MIN_PASSWORD_LEN = 0; 
   //no restricting password length since our application is more like a notebook.
@@ -61,13 +63,13 @@ public class User implements Serializable{
     _password = password.clone();
     _changeMakerName = changerName;
     _changeDate = initDate;
-    userroles = new ArrayList<String>();
   }
     
   @Override
   public String toString(){
     return toJSONString();
   }
+  
   public JSONObject getJSON(){
     /*
     Returns a JSONObject of the contents of the user. JSONObject's toString()
@@ -94,7 +96,7 @@ public class User implements Serializable{
   public boolean changePassword(
 		  byte[] newPassword, String changerName, String newChangeDate 
 	){
-    //Returns true if a new password is not null and has been changed
+    //Returns true if a new password is not null and has been changed.
     //Prints out to standard error a notification if the old and 
     //new passwords are the same
     if ((newPassword == null) || (changerName == null))
@@ -104,12 +106,15 @@ public class User implements Serializable{
       return false;
 
     if (! Arrays.equals(newPassword, _password)){
-      _password = newPassword.clone();
-      _changeDate = newChangeDate;
-      _changeMakerName = changerName;
-    }else
+      this._password = newPassword.clone();
+      this._changeDate = newChangeDate;
+      this._changeMakerName = changerName;
+      
+      return true;
+    }else {
       System.err.println("Password unchanged as both passwords are the same");
-    return true;
+      return false;
+    }
   }
   
 	public static User userFromJSON(String jsonString){
@@ -167,54 +172,47 @@ public class User implements Serializable{
     return passwordCopy;
   }
 
-  public boolean attrSearch(Pattern queryPattern, String attrName){
+  public boolean attrSearch(Pattern queryPattern, String attrName) {
+	if (queryPattern == null || attrName == null) return false;
+	
     if (USERNAME_KEY.equals(attrName))
-      return (_username != null) && (queryPattern.matcher(_username)).find();
+      return (this._username != null) && (queryPattern.matcher(this._username)).find();
 
-    if (CHANGE_MAKER_KEY.equals(attrName))
-      return (_changeMakerName != null) && (queryPattern.matcher(_changeMakerName)).find();
+    else if (CHANGE_MAKER_KEY.equals(attrName))
+      return (this._changeMakerName != null) && (queryPattern.matcher(this._changeMakerName)).find();
     
-    if (DATE_OF_CHANGE_KEY.equals(attrName))
-      return (_changeDate != null) && (queryPattern.matcher(_changeDate)).find();
+    else if (DATE_OF_CHANGE_KEY.equals(attrName))
+      return (this._changeDate != null) && (queryPattern.matcher(this._changeDate)).find();
 
-    if (ROLE_KEY.equals(attrName) && userroles != null){
-      for (String role : userroles){
-        if ((queryPattern.matcher(role)).find())
-          return true;
-      }
-    }
-    
-    for (String urole : userroles){
-         boolean queryMatch = queryPattern.matcher(urole).find();
-         if (queryMatch)
-           return true;
+    else if (attrName.equals(ROLE_KEY) && (this._role != null)) {
+      return (this._role != null) && (queryPattern.matcher(this._role)).find();
     }
     
     return false;
   }
   
-  public boolean searchByAttribute(String attributeName, String query){
+  public boolean searchByAttribute(String attributeName, String query) {
     //Do a case-insensitive match while iterating and searching through attributes
     //Cannot search through passwords, this could pose a possible security hole
-    //Pattern attrPattern = Pattern.compile(attributeName, Pattern.CASE_INSENSITIVE);
     Pattern queryPattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
-    
+
     return attrSearch(queryPattern, attributeName);
   }
 
-  public boolean searchAllAttributes(String query){
-    for (String nonIterValueKey: nonIterValueKeys){
+  public boolean searchAllAttributes(String query) {
+    for (String nonIterValueKey: nonIterValueKeys) {
       if (searchByAttribute(nonIterValueKey, query))
         return true;
     }
 
-    for (String arrayValueKey : arrayValueKeys){
+    for (String arrayValueKey : arrayValueKeys) {
       if (searchByAttribute(arrayValueKey, query))
         return true;
     }
 
     return false;
   }
+  
   public String getRole(){
 	return this._role;  
   }  
