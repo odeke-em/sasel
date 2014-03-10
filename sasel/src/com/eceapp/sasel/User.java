@@ -1,17 +1,14 @@
 package com.eceapp.sasel;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class User extends Object implements Serializable {
-  private final boolean DEBUG = false;
   private static final long serialVersionUID = 0xfffeL;
   private String _username;
   private String _role;

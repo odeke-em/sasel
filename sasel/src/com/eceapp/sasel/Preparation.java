@@ -135,7 +135,7 @@ public class Preparation extends Activity {
 		EditText encKey_ET =(EditText)findViewById(R.id.encryptionKey);
 		encKey_ET.setText(DEV_ENCRYPTION_KEY);
 
-		encryptionCredentialHandler = new Handler(){
+		encryptionCredentialHandler = new Handler() {
 			@Override
 			public void handleMessage(Message msg){
 				String inMsg=(String)msg.obj;
@@ -450,7 +450,7 @@ public class Preparation extends Activity {
 							while (streamScanner.hasNext()) {
 								buffer += streamScanner.next();
 							}
-	
+							streamScanner.close();
 							byte[] decodedData = Base64.decode(buffer, Base64.DEFAULT);
 	
 							//Time to decrypt downloaded data

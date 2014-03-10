@@ -95,6 +95,7 @@
     <string name="iv_encryption_key_img_description">IV_KEY_ENCRYPTION_KEY_IMAGE downloaded from a Google search</string>
     <string name="title_activity_main_menu">MainMenu</string>
     <string name="title_activity_preparation">Preparation</string>
+    <string name="total_meta_info">Total server count</string>
     <string name="app_welcome">Welcome to SASEL</string>
     <string name="preparation_welcome">Select a Google account, and enter your Encryption keys down below.</string>
     <string name="title_activity_single_server_page">SingleServerPage</string>

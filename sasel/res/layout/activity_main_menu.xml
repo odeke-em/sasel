@@ -23,7 +23,10 @@
             android:layout_weight="1"
             android:text="@string/exit" />
     </LinearLayout>
-
+	<TextView
+	    android:id="@+id/totalMetaInfo"
+	    android:layout_width="match_parent"
+	    android:hint="@string/total_meta_info" />
     <EditText
         android:id="@+id/searchServersET"
         android:layout_width="match_parent"
