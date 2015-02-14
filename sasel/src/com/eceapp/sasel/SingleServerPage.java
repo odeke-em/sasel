@@ -24,9 +24,10 @@ import android.widget.ListView;
 
 public class SingleServerPage extends Activity {
 	public static final String SINGLE_SERVER_DATA_BACK = "singleServerDateBack";
-	private Server theServer; 
+	private Server theServer;
+    private String originalName;
+
 	private ArrayList<String> serverNames;
-	private String originalName;
 	private ArrayList<String> displayedIpList;
 	private ArrayList<String> displayedOsList;
 	private ArrayList<String> displayedUserList = new ArrayList<String>();
@@ -224,73 +225,76 @@ public class SingleServerPage extends Activity {
 	}	
 	
 		
-	public void addIpHandler(View v){	
+	public void addIpHandler(View v) {
 		EditText addIpEditText = (EditText)findViewById(R.id.addIpEditText); 
 		String newIp = addIpEditText.getText().toString();
 		
 		Pattern ipPattern = Pattern.compile(Server.IPV4_REGEX);
 		boolean ipValidation = ipPattern.matcher(newIp).find();
 		
-		if (newIp.length()==0 ){
-			addIpEditText.setError("Can not be empty");	
-		}else if (ipValidation==false){
+		if (newIp.length()==0 ) {
+            addIpEditText.setError("Can not be empty");
+            return;
+        }
+		if (ipValidation == false) {
 			addIpEditText.setError("Invalid Ip");
-		}else{
-			if (this.theServer.addIP(newIp))
-				displayedIpList.add(0, newIp);
-			
-			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.theServer.getIPList());
-			ListView targetListView = (ListView) findViewById(R.id.ipListView);
-			targetListView.setAdapter(targetListAdapter);
-			addIpEditText.setText("");	
+            return;
 		}
+		if (this.theServer.addIP(newIp))
+			displayedIpList.add(0, newIp);
+			
+		ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.theServer.getIPList());
+		ListView targetListView = (ListView) findViewById(R.id.ipListView);
+		targetListView.setAdapter(targetListAdapter);
+		addIpEditText.setText("");
 	}	
 
-	public void addAliasHandler(View v){
+	public void addAliasHandler(View v) {
 		EditText addAliasEditText = (EditText)findViewById(R.id.addAliasEditText); 
 		String newAlias = addAliasEditText.getText().toString();
 
-		if (newAlias.length()==0){
-			addAliasEditText.setError("Can not be empty");	
-		}else{
-			if (this.theServer.addAlias(newAlias))
-				displayedAliasList.add(0, newAlias); //Meant to preserve WSIWYG ordering during entry-population
-			
-			ArrayAdapter<String> aliaseListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.theServer.getAliasList());
-			ListView aliaseListView = (ListView) findViewById(R.id.aliasListView);
-			aliaseListView.setAdapter(aliaseListAdapter);
-			addAliasEditText.setText("");	
+		if (newAlias.length() < 1){
+			addAliasEditText.setError("Can not be empty");
+            return;
 		}
+
+		if (this.theServer.addAlias(newAlias))
+			displayedAliasList.add(0, newAlias); //Meant to preserve WSIWYG ordering during entry-population
+			
+		ArrayAdapter<String> aliaseListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.theServer.getAliasList());
+		ListView aliaseListView = (ListView) findViewById(R.id.aliasListView);
+		aliaseListView.setAdapter(aliaseListAdapter);
+		addAliasEditText.setText("");
 	}
 	
 	public void addServerRoleHandler(View v){
 		EditText addServerRoleEditText = (EditText)findViewById(R.id.addServerRoleEditText); 
 		String newServerRole = addServerRoleEditText.getText().toString();
 		
-		if (newServerRole.length()==0){
-			addServerRoleEditText.setError("Can not be empty");	
+		if (newServerRole.length() < 1){
+			addServerRoleEditText.setError("Can not be empty");
+            return;
 		}
-		else{
-			if (this.theServer.addRole(newServerRole)){
-				displayedServerRoleList.add(0, newServerRole);
-			}
+
+		if (this.theServer.addRole(newServerRole))
+			displayedServerRoleList.add(0, newServerRole);
 			
-			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedServerRoleList);
-			ListView targetListView = (ListView) findViewById(R.id.serverRoleListView);
-			targetListView.setAdapter(targetListAdapter);
-			addServerRoleEditText.setText("");	
-		}		
+		ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedServerRoleList);
+		ListView targetListView = (ListView) findViewById(R.id.serverRoleListView);
+		targetListView.setAdapter(targetListAdapter);
+		addServerRoleEditText.setText("");
 	}
 	
 	
 	private OnItemLongClickListener deleteUserListener = new OnItemLongClickListener(){
 		@Override
-	    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id){
-			
-			final String nameForDeletion = displayedUserList.get(position);
-			final int itemPostion = position;
-			
+	    public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
+
+            final int position = pos;
+			final String nameForDeletion = displayedUserList.get(pos);
+
 			AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+
 			builder.setTitle("Delete User: "+nameForDeletion+"?");  
 			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 				@Override
@@ -302,10 +306,11 @@ public class SingleServerPage extends Activity {
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					deleteItemInServer(R.id.userListView,itemPostion);
+					deleteItemInServer(R.id.userListView, position);
 					return;
 				}
 			});
+
 			AlertDialog deleteDialog = builder.create();
 			deleteDialog.show();
 			return true;
@@ -314,11 +319,11 @@ public class SingleServerPage extends Activity {
 	
 	private OnItemLongClickListener deleteOsListener = new OnItemLongClickListener(){
 		@Override
-	    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id){
-			
+	    public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
+
+            final int position = pos;
 			final String nameForDeletion = displayedOsList.get(position);
-			final int itemPostion = position;
-			
+
 			AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 			builder.setTitle("Delete OS: "+nameForDeletion+"?");  
 			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -331,7 +336,7 @@ public class SingleServerPage extends Activity {
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					deleteItemInServer(R.id.osListView,itemPostion);
+					deleteItemInServer(R.id.osListView, position);
 					return;
 				}
 			});
@@ -342,13 +347,13 @@ public class SingleServerPage extends Activity {
 	};	
 	
 	
-	private OnItemLongClickListener deleteIpListener = new OnItemLongClickListener(){
+	private OnItemLongClickListener deleteIpListener = new OnItemLongClickListener() {
 		
 		@Override
-	    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id){
-			
+	    public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id) {
+
+            final int position = pos;
 			final String nameForDeletion = displayedIpList.get(position);
-			final int itemPostion = position;
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 			builder.setTitle("Delete Ip: "+nameForDeletion+"?");  
@@ -362,7 +367,7 @@ public class SingleServerPage extends Activity {
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					deleteItemInServer(R.id.ipListView,itemPostion);
+					deleteItemInServer(R.id.ipListView, position);
 					return;
 				}
 			});
@@ -405,10 +410,11 @@ public class SingleServerPage extends Activity {
 	private OnItemLongClickListener deleteServerRoleListener = new OnItemLongClickListener(){
 		
 		@Override
-	    public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id){
-			
+	    public boolean onItemLongClick(AdapterView<?> parent, View v, int pos, long id){
+
+            final int position = pos;
 			final String nameForDeletion = displayedServerRoleList.get(position);
-			final int itemPostion = position;
+
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 			builder.setTitle("Delete Server Role: "+nameForDeletion+"?");  
@@ -422,7 +428,7 @@ public class SingleServerPage extends Activity {
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					deleteItemInServer(R.id.serverRoleListView,itemPostion);
+					deleteItemInServer(R.id.serverRoleListView, position);
 					return;
 				}
 			});
@@ -432,30 +438,32 @@ public class SingleServerPage extends Activity {
 	    }
 	};
 	
-	private void deleteItemInServer(int viewListId, int itemPosition){
+	private void deleteItemInServer(int viewListId, int itemPosition) {
 		//Historically, we were able to use switch-case but as of September 2013, we've had issues
 		//with id's being generated as public static int .. instead of public static final int ..
 		//Which makes the compiler interpreted as non-final
-		if(viewListId == R.id.userListView){ 
-			
+		if(viewListId == R.id.userListView) {
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedUserList);
 			ListView targetListView = (ListView) findViewById(R.id.userListView);
 
-			if (theServer.removeUserByIndex(itemPosition) == true)
+			if (theServer.removeUserByIndex(itemPosition))
 				displayedUserList.remove(itemPosition);
+
 			targetListView.setAdapter(targetListAdapter);
+            return;
 		}
 		
-		else if (viewListId == R.id.osListView){
+		if (viewListId == R.id.osListView) {
 			displayedOsList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedOsList);
 			ListView targetListView = (ListView) findViewById(R.id.osListView);
 			
 			theServer.removeOsByIndex(itemPosition);
 			targetListView.setAdapter(targetListAdapter);
+            return;
 		}
 		
-		else if(viewListId == R.id.ipListView){
+		if(viewListId == R.id.ipListView) {
 			displayedIpList.remove(itemPosition);
 
 			theServer.removeIpByIndex(itemPosition);
@@ -463,24 +471,27 @@ public class SingleServerPage extends Activity {
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, displayedIpList);
 			ListView targetListView = (ListView) findViewById(R.id.ipListView);
 			targetListView.setAdapter(targetListAdapter);
+            return;
 		}
 		
-		else if (viewListId == R.id.aliasListView){
+		if (viewListId == R.id.aliasListView) {
 			displayedAliasList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedAliasList);
 			ListView targetListView = (ListView) findViewById(R.id.aliasListView);
 			
 			theServer.removeAliasByIndex(itemPosition);
 			targetListView.setAdapter(targetListAdapter);
+            return;
 		}
 		
-		else if (viewListId == R.id.serverRoleListView){			
+		if (viewListId == R.id.serverRoleListView){
 			displayedServerRoleList.remove(itemPosition);
 			ArrayAdapter<String> targetListAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, displayedServerRoleList);
 			ListView targetListView = (ListView) findViewById(R.id.serverRoleListView);
 			
 			theServer.removeServerRoleByIndex(itemPosition);
 			targetListView.setAdapter(targetListAdapter);
+            return;
 		}				
 	}
 }

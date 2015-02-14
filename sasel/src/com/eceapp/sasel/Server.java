@@ -16,34 +16,34 @@ public class Server extends Object implements Serializable{
     Single entry immutable: Hostname, IP(s), Location, Function, OS(es)
     *Single entry co-related sets: Role, Username, Password, Date_of_Change
    */
-   	public static final int NOT_FOUND = -1;
-    public static final int SUCCESS = 0xff;
-    public static final int ERROR_CODE = ~SUCCESS;
-    public static final int MIN_PORT = 0;
-    public static final int MAX_PORT = (1 << 16); 
+   	public static final int NOT_FOUND   = -1;
+    public static final int SUCCESS     = 0xff;
+    public static final int ERROR_CODE  = ~SUCCESS;
+    public static final int MIN_PORT    = 0;
+    public static final int MAX_PORT    = (1 << 16);
     
     protected final static JSONParser parser = new JSONParser();
     protected ArrayList<User> users = null; 
     
     private String _hostname; 
     private String _location;
-    public final static String ROLE_KEY = "server_role";
 
-    public static final String IPs_KEY = "ips";
-    public static final String USERS_KEY = "users";
-    public static final String OS_LIST_KEY = "oslist";
-    public static final String ALIASES_KEY = "aliases";
-    public static final String LOCATION_KEY = "location";
-    public static final String SERVERNAME_KEY = "servername";
+    public static final String ALIASES_KEY      = "aliases";
+    public static final String IPs_KEY          = "ips";
+    public static final String OS_LIST_KEY      = "oslist";
+    public static final String LOCATION_KEY     = "location";
+    public final static String ROLE_KEY         = "server_role";
+    public static final String SERVERNAME_KEY   = "servername";
     public static final String SERVER_ROLES_KEY = "serverroles";
+    public static final String USERS_KEY        = "users";
 
     public final HashMap<String,String> nonIterValueKeys = new HashMap<String,String>();
     	
     public final 
       HashMap<String, ArrayList<String>> arrayValueKeys = new HashMap<String, ArrayList<String>>();
                                           
-    public static final char comma = ',';
-    public static final char apostrophe='"'; 
+    public static final char comma          =   ',';
+    public static final char apostrophe     =   '"';
 
     private ArrayList<String> _ipList = null;
     private ArrayList<String> _osList = null;
@@ -51,7 +51,7 @@ public class Server extends Object implements Serializable{
 	protected ArrayList<String> _aliasList = null;
 
     public final static String 
-       t255regex = "(1?[0-9]?[0-9]|2([0-5]{2}|[0-4][0-9]))",//0-255 range regex
+       t255regex = "(1?[0-9]?[0-9]|2([0-5]{2}|[0-4][0-9]))",    //0-255 range regex
        IPV4_REGEX = "^("+t255regex+"\\.){3}"+ t255regex+"$";
 
     public Server(
@@ -72,11 +72,13 @@ public class Server extends Object implements Serializable{
 
       if (aliasList == null)
         throw new Exception("Null aliaslist passed in.");
+
       if (roleList == null)
         throw new Exception("Null roleList passed in.");
-      try{
+
+      try {
         validateIpList(ipList, IPV4_REGEX);
-      } catch (Exception e){
+      } catch (Exception e) {
         e.printStackTrace();
       }
       
@@ -103,38 +105,37 @@ public class Server extends Object implements Serializable{
       this.arrayValueKeys.put(ROLE_KEY, _roleList);
     }
 
-    public Server(){
-        this._ipList = new ArrayList<String>(); 
-        this._osList = new ArrayList<String>(); 
-        this._roleList = new ArrayList<String>();
+    public Server() {
+        this._ipList    = new ArrayList<String>();
+        this._osList    = new ArrayList<String>();
+        this._roleList  = new ArrayList<String>();
         this._aliasList = new ArrayList<String>();
-
-        this._hostname = new String();
-        this._location = new String();
-        
-        this.users = new ArrayList<User>();
+        this._hostname  = new String();
+        this._location  = new String();
+        this.users      = new ArrayList<User>();
     }
     
     @SuppressWarnings("unchecked")
-	public static Server serverFromJSON(String jsonString){
+	public static Server serverFromJSON(String jsonString) {
     	Server result = null;
-    	try{
+    	try {
     		JSONObject serverData = (JSONObject)parser.parse(jsonString);
     		String hostname = (String)serverData.get(SERVERNAME_KEY);
     		String location = (String)serverData.get(LOCATION_KEY);
-    		JSONArray ips = (JSONArray)serverData.get(IPs_KEY);
-    		JSONArray oses = (JSONArray)serverData.get(OS_LIST_KEY);
-    		JSONArray aliases = (JSONArray)serverData.get(ALIASES_KEY);
-    		JSONArray roles  = (JSONArray)serverData.get(ROLE_KEY);
+
+    		ArrayList<String> ips       = (ArrayList<String>)serverData.get(IPs_KEY);
+    		ArrayList<String> oses      = (ArrayList<String>)serverData.get(OS_LIST_KEY);
+    		ArrayList<String> aliases   = (ArrayList<String>)serverData.get(ALIASES_KEY);
+    		ArrayList<String> roles     = (ArrayList<String>)serverData.get(ROLE_KEY);
+            ArrayList<String> userJSONArray = (ArrayList<String>)serverData.get(USERS_KEY);
     		
-    		result = new Server(hostname,location,(ArrayList<String>)ips,
-    				(ArrayList<String>)oses,(ArrayList<String>)aliases,(ArrayList<String>)roles);
-    		
-    		ArrayList<String> userJSONArray = (ArrayList<String>)serverData.get(USERS_KEY);
-    		if (userJSONArray == null){ //At least the array should be empty not null
+    		result = new Server(hostname, location, ips, oses, aliases, roles);
+
+    		if (userJSONArray == null) { //At least the array should be empty not null
     			throw new Exception("Possibly corrupted data. Expected the key "+USERS_KEY);
     		}
-    		for (String userJSON : userJSONArray){
+
+    		for (String userJSON : userJSONArray) {
     			User u = User.userFromJSON((String)userJSON);
     			if (u != null){
     				result.addUser(u);
@@ -145,10 +146,10 @@ public class Server extends Object implements Serializable{
     	}
     	return result;
     }
-    public boolean removeAllUsers(boolean SUPER_USER_ACCESS){
+    public boolean removeAllUsers(boolean SUPER_USER_ACCESS) {
       boolean allCleared = false;
-      try{
-	      if (SUPER_USER_ACCESS == true){ 
+      try {
+	      if (SUPER_USER_ACCESS) {
 	        this.users.clear(); 
 	        allCleared = true;
         }
@@ -159,7 +160,7 @@ public class Server extends Object implements Serializable{
       return allCleared;
     } 
 
-    public boolean isValidIP(String ip){
+    public boolean validIP(String ip){
       Pattern ipPat = Pattern.compile(IPV4_REGEX);
       Matcher ipMatcher    = ipPat.matcher(ip);
 
@@ -236,10 +237,11 @@ public class Server extends Object implements Serializable{
 
     public boolean changeName(String newName){
       boolean nameChanged = false;
-      if ((newName != null) && (_hostname != newName)){
+      if (newName != null && this._hostname != newName){
         this._hostname = newName;
         nameChanged = true;
       }
+
       return nameChanged;
     }
 
@@ -247,42 +249,47 @@ public class Server extends Object implements Serializable{
       if (LOCATION_KEY.equals(attrName))
         return (queryPattern.matcher(this._location)).find();
 
-      else if (SERVERNAME_KEY.equals(attrName))
+      if (SERVERNAME_KEY.equals(attrName))
         return (queryPattern.matcher(this._hostname)).find();
 
-      else if (ROLE_KEY.equals(attrName)){
-        for (String role : this._roleList){
-          if ((queryPattern.matcher(role)).find())
-            return true;
-        }
-      }else if (IPs_KEY.equals(attrName)){
+      if (ROLE_KEY.equals(attrName)) {
+          for (String role : this._roleList) {
+              if ((queryPattern.matcher(role)).find())
+                  return true;
+          }
+          return false;
+      }
+
+      if (IPs_KEY.equals(attrName)) {
     	for (String ip : this._ipList){
     	  if ((queryPattern.matcher(ip)).find())
     	    return true;
     	  }
+          return false;
       }
       
     return false;
     }
 
-    public boolean searchByAttribute(String attributeName, String query){
+    public boolean searchByAttribute(String attributeName, String query) {
       String stQuery = "[\\s]*("+query+")"; //Searching from the start of each word in a sentence
-      Pattern queryPattern = Pattern.compile(stQuery, Pattern.CASE_INSENSITIVE);
-      Pattern attrPattern = Pattern.compile(attributeName, Pattern.CASE_INSENSITIVE);
+
+      Pattern attrPattern   = Pattern.compile(attributeName, Pattern.CASE_INSENSITIVE);
+      Pattern queryPattern  = Pattern.compile(stQuery, Pattern.CASE_INSENSITIVE);
       
       if (attrPattern.matcher(SERVERNAME_KEY).find())
     	 return queryPattern.matcher(this._hostname).find();
       
-      else if (attrPattern.matcher(LOCATION_KEY).find()) 
+      if (attrPattern.matcher(LOCATION_KEY).find())
     	 return queryPattern.matcher(this._location).find();
       
-      else if (attrPattern.matcher(OS_LIST_KEY).find()){
+      if (attrPattern.matcher(OS_LIST_KEY).find()){
     	  for (String os : this._osList){
     		  if (queryPattern.matcher(os).find()) return true;
     	  }
       }
       
-      else if (attrPattern.matcher(IPs_KEY).find()){
+      if (attrPattern.matcher(IPs_KEY).find()){
     	  Pattern queryForIP = Pattern.compile(query, Pattern.CASE_INSENSITIVE); 
     	  for (String ip : this._ipList){
     		  //System.out.println("CurIP "+ip);
@@ -294,21 +301,21 @@ public class Server extends Object implements Serializable{
     }
 
     public boolean searchAllAttributes(String query){
-      for (String nonIterValueKey : nonIterValueKeys.keySet()){
+      for (String key : nonIterValueKeys.keySet()){
     	
-        if (searchByAttribute(nonIterValueKey, query))
+        if (searchByAttribute(key, query))
           return true;
       }
       
-      for (String arrayValueKey : arrayValueKeys.keySet()){
+      for (String key : arrayValueKeys.keySet()){
     	//System.out.println("arrItVK "+arrayValueKey + " query "+query);
-        if (searchByAttribute(arrayValueKey, query))
+        if (searchByAttribute(key, query))
           return true;
       }
 
       ArrayList<User> userMatches = searchUsers(query);
       //System.out.println("UserMatches "+userMatches);
-      if (userMatches != null){ //Will handle attribute reporting later
+      if (userMatches != null) { //Will handle attribute reporting later
     	  return (!userMatches.isEmpty());
       }
       
@@ -404,6 +411,5 @@ public class Server extends Object implements Serializable{
    public void removeServerRoleByIndex(int index){
 	   if (index >= 0 && index < this._roleList.size())
 		   this._roleList.remove(index);
-   }  
-   
+   }
 }
